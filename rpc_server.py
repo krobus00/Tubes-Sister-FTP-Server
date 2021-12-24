@@ -9,6 +9,7 @@ class RPCServer:
         self.server = None
 
     def run(self):
+        # membuat server rpc dari port yang sudah dibuat di .env
         self.server = SimpleXMLRPCServer(
             ("0.0.0.0", int(os.getenv('APP_PORT'))), allow_none=True
         )
