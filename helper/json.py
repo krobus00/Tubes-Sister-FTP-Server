@@ -17,8 +17,3 @@ def Response(success=True, message="", data=None, error=None):
         res["errorTraceback"] = str(error)
 
     return json.dumps(res)
-
-
-def DecodeJson(payload):
-    return json.loads(payload)
-
