@@ -11,10 +11,10 @@ class UserService:
         try:
             user = self.userRepo.findByUsername(username)
             if not user:
-                return Response(message="Username tidak ditemukan")
+                return Response(success=False, message="Username tidak ditemukan")
             password = hashlib.md5(password.encode()).hexdigest()
             if user[3] != password:
-                return Response(message="Password tidak sesuai")
+                return Response(success=False, message="Password tidak sesuai")
 
             return Response(message="Berhasil login", data={
                 "id": user[1],
@@ -31,7 +31,7 @@ class UserService:
         try:
             user = self.userRepo.findByUsername(username)
             if user:
-                return Response(message="Username sudah digunakan")
+                return Response(success=False, message="Username sudah digunakan")
             userId = str(uuid.uuid4())
             password = hashlib.md5(password.encode()).hexdigest()
             self.userRepo.store(userId, username, password)

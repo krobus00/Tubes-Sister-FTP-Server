@@ -7,8 +7,8 @@ server = client.ServerProxy(
 USERNAME = "username"
 PASSWORD = "password"
 UPLOAD_FILENAME = "sample.txt"
-USER_UUID = "39493e92-b400-406c-a2d1-9b1408f2eaf9"
-FILE_UUID = "544791cc-2d78-4222-ad41-2d38ba7a94b8"
+USER_UUID = "15154628-ee70-496c-8c85-80d965207bb9"
+FILE_UUID = "4f321183-bbeb-45e3-a139-173d54d474e3"
 
 # REGISTER
 
@@ -23,6 +23,11 @@ print(res)
 # GET FILE LIST
 
 res = server.file_list()
+print(res)
+
+# GET MY FILE LIST
+
+res = server.my_files(USER_UUID)
 print(res)
 
 # UPLOAD

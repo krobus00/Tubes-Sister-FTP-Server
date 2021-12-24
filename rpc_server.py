@@ -31,6 +31,11 @@ class RPCServer:
             "file_list"
         )
 
+        self.server.register_function(
+            self.fileService.get_my_files,
+            "my_files"
+        )
+
         # users
         self.server.register_function(
             self.userService.register,

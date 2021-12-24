@@ -3,17 +3,14 @@ class FileRepository:
         self.db = db
         self.cursor = self.db.cursor()
 
-    def pagination(self, limit, page):
-        if page == 1:
-            offset = 0
-        else:
-            offset = page * limit - limit
-        sql = 'SELECT * FROM files LIMIT {}, {}'.format(offset, limit)
+    def get_files(self):
+        sql = 'SELECT f.id, f.fileName, f.size, u.username, f.created_at, f.updated_at FROM files f JOIN users u ON f.user_id = u.id'
         self.cursor.execute(sql)
         return self.cursor.fetchall()
 
-    def get_files(self):
-        sql = 'SELECT f.id, f.fileName, f.size, u.username, f.created_at, f.updated_at FROM files f JOIN users u ON f.user_id = u.id'
+    def get_my_files(self, userId):
+        sql = 'SELECT f.id, f.fileName, f.size, u.username, f.created_at, f.updated_at FROM files f JOIN users u ON f.user_id = u.id AND f.user_id = "{}"'.format(
+            userId)
         self.cursor.execute(sql)
         return self.cursor.fetchall()
 

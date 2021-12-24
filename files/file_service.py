@@ -89,3 +89,26 @@ class FileService:
                 message="Terjadi kesalahan, silahkan coba lagi nanti",
                 error=e
             )
+
+    def get_my_files(self, userId):
+        try:
+            files = self.fileRepo.get_my_files(userId)
+            listfiles = []
+            for file in files:
+                listfiles.append({
+                    "id": file[0],
+                    "fileName": file[1],
+                    "size": file[2],
+                    "username": file[3],
+                    "createdAt": file[4].strftime('%Y-%m-%d %H:%M:%S'),
+                })
+            return Response(
+                message="Berhasil mendapatkan list file",
+                data=listfiles
+            )
+        except Exception as e:
+            return Response(
+                success=False,
+                message="Terjadi kesalahan, silahkan coba lagi nanti",
+                error=e
+            )
