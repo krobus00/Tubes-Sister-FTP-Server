@@ -4,6 +4,7 @@ class UserRepository:
         self.cursor = self.db.cursor()
 
     def findByUsername(self, username):
+        self.db.ping(reconnect=True)
         # membuat query mendapatkan user dengan username tertentu
         sql = 'SELECT * FROM users WHERE username = "{}"'.format(username)
         # execute query
@@ -12,6 +13,7 @@ class UserRepository:
         return self.cursor.fetchone()
 
     def store(self, userId, username, password):
+        self.db.ping(reconnect=True)
         # membuat query insert ke table users
         sql = "INSERT INTO users (id,username,password) VALUES (%s, %s, %s)"
         # mengisi value yang akan diinsert
@@ -20,6 +22,7 @@ class UserRepository:
         return self.cursor.execute(sql, vals)
 
     def get_most_active_users(self):
+        self.db.ping(reconnect=True)
         # membuat query untuk mengurutkan user berdasarkan total activity
         # join 2 table (user dan activity_logs)
         # kemudian group by username
@@ -31,9 +34,11 @@ class UserRepository:
         return self.cursor.fetchall()
 
     def commit(self):
+        self.db.ping(reconnect=True)
         # melakukan commit terhadap transaksi yang sudah dijalankan
         self.db.commit()
 
     def rollback(self):
+        self.db.ping(reconnect=True)
         # melakukan rollback terhadap transaksi yang sudah dijalankan
         self.db.rollback()
