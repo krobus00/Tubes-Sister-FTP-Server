@@ -28,7 +28,8 @@ class UserService:
             # return pesan berhasil dan detail user id serta username
             return Response(message="Berhasil login", data={
                 "id": user[1],
-                "username": user[2]
+                "username": user[2],
+                "role": user[4],
             })
         except Exception as e:
             self.db.close_connection()
