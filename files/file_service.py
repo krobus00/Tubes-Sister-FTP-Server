@@ -5,13 +5,16 @@ from helper.json import *
 
 
 class FileService:
-    def __init__(self, fileRepo, logRepo):
+    def __init__(self, db, fileRepo, logRepo):
+        self.db = db
+        self.conn = self.db.connection()
         self.fileRepo = fileRepo
         self.logRepo = logRepo
 
     def upload(self, fileData, fileName, userId):
         # membuat try catch untuk menghandle exception
         try:
+            self.conn = self.db.connection()
             # membuat format nama file dengan tanggal dan jam
             # agar file tidak duplikat
             saved_filename = "{}_{}".format(
@@ -25,20 +28,22 @@ class FileService:
                 # generate uuid
                 fileId = str(uuid.uuid4())
                 # menyimpan nama file dan ukuran file ke database
-                self.fileRepo.store(fileId, userId, fileName,
+                self.fileRepo.store(self.conn, fileId, userId, fileName,
                                     saved_filename, handle.tell())
                 # mencatat history dari user sekarang
-                self.logRepo.store("UPLOAD", userId, fileId)
+                self.logRepo.store(self.conn, "UPLOAD", userId, fileId)
 
                 # commit transaction ketika semua data sudah berhasil diinput
-                self.fileRepo.commit()
-                self.logRepo.commit()
+                self.fileRepo.commit(self.conn)
+                self.logRepo.commit(self.conn)
+                self.db.close_connection()
                 # mengembalikan nilai True karena fungsi berjalan normal
                 return Response(message="Data berhasil diupload")
         except Exception as e:
             # ketika ada fungsi yang gagal maka rollback transaction yang sudah berjalan
-            self.fileRepo.rollback()
-            self.logRepo.rollback()
+            self.fileRepo.rollback(self.conn)
+            self.logRepo.rollback(self.conn)
+            self.db.close_connection()
             # return error karena fungsi terjadi exception
             return Response(
                 message="Terjadi kesalahan, silahkan coba lagi nanti",
@@ -46,22 +51,24 @@ class FileService:
             )
 
     def download(self, userId, fileId):
-        # memanggil get file by id dari file repo
-        file = self.fileRepo.get_file_by_id(fileId)
-        # jika file tidak ditemukan
-        if not file:
-            # return pesan file tidak ditemukan
-            return Response(
-                success=False,
-                message="File tidak ditemukan!"
-            )
         # membuat try catch untuk menghandle exception
         try:
+            self.conn = self.db.connection()
+            # memanggil get file by id dari file repo
+            file = self.fileRepo.get_file_by_id(self.conn, fileId)
+            # jika file tidak ditemukan
+            if not file:
+                # return pesan file tidak ditemukan
+                return Response(
+                    success=False,
+                    message="File tidak ditemukan!"
+                )
             # membaca file yang dipilih
             with open("uploads/{}".format(file[4]), "rb") as handle:
                 # mencatat history dari user sekarang
-                self.logRepo.store("DOWNLOAD", userId, fileId)
+                self.logRepo.store(self.conn, "DOWNLOAD", userId, fileId)
                 # return pesan sukses dengan filename dan filedatanya
+                self.db.close_connection()
                 return Response(
                     message="Berhasil melakukan download data",
                     data={
@@ -72,6 +79,7 @@ class FileService:
         except Exception as e:
             # ketika ada fungsi yang gagal maka rollback transaction yang sudah berjalan
             self.logRepo.rollback()
+            self.db.close_connection()
             # jika terjadi exception
             # return pesan error
             return Response(
@@ -83,8 +91,9 @@ class FileService:
     def get_list_file(self):
         # membuat try catch untuk menghandle exception
         try:
+            self.conn = self.db.connection()
             # memanggil fungsi get files dari file repository
-            files = self.fileRepo.get_files()
+            files = self.fileRepo.get_files(self.conn)
             listfiles = []
             # melakukan looping files yang didapatkan
             for file in files:
@@ -96,12 +105,14 @@ class FileService:
                     "username": file[3],
                     "createdAt": file[4].strftime('%Y-%m-%d %H:%M:%S'),
                 })
+            self.db.close_connection()
             # return pesan berhasil
             return Response(
                 message="Berhasil mendapatkan list file",
                 data=listfiles
             )
         except Exception as e:
+            self.db.close_connection()
             # jika terjadi exception
             # return pesan error
             return Response(
@@ -113,8 +124,9 @@ class FileService:
     def get_my_files(self, userId):
         # membuat try catch untuk menghandle exception
         try:
+            self.conn = self.db.connection()
             # memanggil fungsi get my files dari file repository
-            files = self.fileRepo.get_my_files(userId)
+            files = self.fileRepo.get_my_files(self.conn, userId)
             listfiles = []
             # melakukan looping files yang didapatkan
             for file in files:
@@ -125,12 +137,14 @@ class FileService:
                     "username": file[3],
                     "createdAt": file[4].strftime('%Y-%m-%d %H:%M:%S'),
                 })
+            self.db.close_connection()
             # return pesan berhasil
             return Response(
                 message="Berhasil mendapatkan list file",
                 data=listfiles
             )
         except Exception as e:
+            self.db.close_connection()
             # jika terjadi exception
             # return pesan error
             return Response(

@@ -13,11 +13,12 @@ class Database:
             'database': os.getenv('DB_NAME'),
             'raise_on_warnings': True
         }
+        self.db = None
 
     def connection(self):
         try:
             # membuat koneksi dari config yang sudah dibuat
-            cnx = mysql.connector.connect(pool_name = "tubes",
+            self.db = mysql.connector.connect(pool_name = "tubes",
                               pool_size = 10,
                               **self.config)
         except mysql.connector.Error as err:
@@ -29,9 +30,11 @@ class Database:
                 exit("Database does not exist")
             else:
                 # menampilkan pesan error jika ada error lainnya
-                exit(err)
+                print(err)
         else:
-            if cnx.is_connected():
-                # menampilkan pesan berhasil terhubung jika koneksi sudah berhasil
-                print("Berhasil terhubung ke database")
-            return cnx
+            return self.db
+
+    def close_connection(self):
+        if self.db.is_connected():
+            # self.db.cursor.close()
+            self.db.close()

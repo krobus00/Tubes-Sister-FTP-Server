@@ -3,11 +3,16 @@ import uuid
 
 
 class LogRepository:
-    def __init__(self, db):
+    def __init__(self):
+        self.db = None
+        self.cursor = None
+
+    def _database(self, db):
         self.db = db
         self.cursor = self.db.cursor()
 
-    def store(self, action, user_id, file_id):
+    def store(self, db, action, user_id, file_id):
+        self._database(db)
         # membuat uuid untuk data log
         logId = str(uuid.uuid4())
         # membuat query insert ke table activity_log
@@ -17,10 +22,12 @@ class LogRepository:
         # execute query
         self.cursor.execute(sql, vals)
 
-    def commit(self):
+    def commit(self, db):
+        self._database(db)
         # melakukan commit terhadap transaksi yang sudah dijalankan
         self.db.commit()
 
-    def rollback(self):
+    def rollback(self, db):
+        self._database(db)
         # melakukan rollback terhadap transaksi yang sudah dijalankan
         self.db.rollback()

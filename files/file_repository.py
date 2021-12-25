@@ -1,9 +1,14 @@
 class FileRepository:
-    def __init__(self, db):
+    def __init__(self):
+        self.db = None
+        self.cursor = None
+
+    def _database(self, db):
         self.db = db
         self.cursor = self.db.cursor()
 
-    def get_files(self):
+    def get_files(self, db):
+        self._database(db)
         # membuat query untuk mendapatkan list file yang tersedia
         # join 2 table (user dan files)
         # kemudian diurutkan berdasarkan waktu file diupload
@@ -13,7 +18,8 @@ class FileRepository:
         # mengambil seluruh hasil query yang dijalankan
         return self.cursor.fetchall()
 
-    def get_my_files(self, userId):
+    def get_my_files(self, db, userId):
+        self._database(db)
         # membuat query untuk mendapatkan list file dengan userId tertentu
         # join 2 table (user dan files)
         # kemudian diurutkan berdasarkan waktu file diupload
@@ -24,7 +30,8 @@ class FileRepository:
         # mengambil seluruh hasil query yang dijalankan
         return self.cursor.fetchall()
 
-    def get_file_by_id(self, id):
+    def get_file_by_id(self, db, id):
+        self._database(db)
         # membuat query untuk mendapatkan file dengan id tertentu
         sql = 'SELECT * FROM files WHERE id = "{}"'.format(id)
         # execute query
@@ -32,7 +39,8 @@ class FileRepository:
         # mengambil 1 data dari query yang dijalankan
         return self.cursor.fetchone()
 
-    def store(self, fileId, userId, fileName, saved_filename, size):
+    def store(self, db, fileId, userId, fileName, saved_filename, size):
+        self._database(db)
         # membuat query insert ke table files
         sql = "INSERT INTO files (id, user_id,filename,saved_filename,size) VALUES (%s, %s, %s, %s, %s)"
         # mengisi value yang akan diinsert
@@ -40,10 +48,12 @@ class FileRepository:
         # execute query
         return self.cursor.execute(sql, vals)
 
-    def commit(self):
+    def commit(self, db):
+        self._database(db)
         # melakukan commit terhadap transaksi yang sudah dijalankan
         self.db.commit()
 
-    def rollback(self):
+    def rollback(self, db):
+        self._database(db)
         # melakukan rollback terhadap transaksi yang sudah dijalankan
         self.db.rollback()

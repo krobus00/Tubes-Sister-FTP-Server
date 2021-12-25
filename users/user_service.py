@@ -4,14 +4,17 @@ from helper.json import *
 
 
 class UserService:
-    def __init__(self, userRepo):
+    def __init__(self, db, userRepo):
+        self.db = db
+        self.conn = self.db.connection()
         self.userRepo = userRepo
 
     def login(self, username, password):
         # membuat try catch untuk menghandle exception
         try:
+            self.conn = self.db.connection()
             # memanggil fungsi find by username yang ada di user repository
-            user = self.userRepo.findByUsername(username)
+            user = self.userRepo.findByUsername(self.conn, username)
             # jika user tidak ditemukan
             if not user:
                 # return pesan username tidak ditemukan
@@ -21,12 +24,14 @@ class UserService:
             # jika password tidak sama
             if user[3] != password:
                 return Response(success=False, message="Password tidak sesuai")
+            self.db.close_connection()
             # return pesan berhasil dan detail user id serta username
             return Response(message="Berhasil login", data={
                 "id": user[1],
                 "username": user[2]
             })
         except Exception as e:
+            self.db.close_connection()
             # jika terjadi exception
             # return pesan error
             return Response(
@@ -34,12 +39,14 @@ class UserService:
                 message="Terjadi kesalahan, silahkan coba lagi nanti",
                 error=e
             )
+            
 
     def register(self, username, password):
         # membuat try catch untuk menghandle exception
         try:
+            self.conn = self.db.connection()
             # memanggil fungsi find by username yang ada di user repository
-            user = self.userRepo.findByUsername(username)
+            user = self.userRepo.findByUsername(self.conn, username)
             # jika username sudah ada
             if user:
                 # menampilkan pesan error username sudah digunakan
@@ -49,14 +56,16 @@ class UserService:
             # melakukan hashing password
             password = hashlib.md5(password.encode()).hexdigest()
             # memanggil fungsi store di user repository
-            self.userRepo.store(userId, username, password)
+            self.userRepo.store(self.conn, userId, username, password)
             # commit transaksi dari user repository
-            self.userRepo.commit()
+            self.userRepo.commit(self.conn)
             # return pesan sukses
+            self.db.close_connection()
             return Response(message="Registrasi berhasil")
         except Exception as e:
             # rollback transaksi user repository
-            self.userRepo.rollback()
+            self.userRepo.rollback(self.conn)
+            self.db.close_connection()
             # jika terjadi exception
             # return pesan error
             return Response(
@@ -68,8 +77,9 @@ class UserService:
     def get_most_active(self):
         # membuat try catch untuk menghandle exception
         try:
+            self.conn = self.db.connection()
             # memanggil fungsi get most active users dari user repository
-            users = self.userRepo.get_most_active_users()
+            users = self.userRepo.get_most_active_users(self.conn)
             listuser = []
             # melakukan looping terhadap data users
             for user in users:
@@ -84,6 +94,7 @@ class UserService:
                 data=listuser
             )
         except Exception as e:
+            self.db.close_connection()
             # jika terjadi exception
             # return pesan error
             return Response(

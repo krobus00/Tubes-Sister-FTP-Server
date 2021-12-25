@@ -13,19 +13,19 @@ def main():
     # load .env
     load_dotenv()
     # membuat koneksi database baru
-    db = Database().connection()
+    db = Database()
 
     # membuat file repository
-    file_repository = FileRepository(db)
+    file_repository = FileRepository()
     # membuat user repository
-    user_repository = UserRepository(db)
+    user_repository = UserRepository()
     # membuat log repository
-    log_repository = LogRepository(db)
+    log_repository = LogRepository()
 
     # membuat file service
-    file_service = FileService(file_repository, log_repository)
+    file_service = FileService(db, file_repository, log_repository)
     # membuat user service
-    user_service = UserService(user_repository)
+    user_service = UserService(db, user_repository)
     # membuat server
     server = RPCServer(user_service, file_service)
     # menjalankan server
