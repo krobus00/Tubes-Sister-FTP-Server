@@ -17,7 +17,9 @@ class Database:
     def connection(self):
         try:
             # membuat koneksi dari config yang sudah dibuat
-            cnx = mysql.connector.connect(**self.config)
+            cnx = mysql.connector.connect(pool_name = "tubes",
+                              pool_size = 10,
+                              **self.config)
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 # menampilkan pesan error ketika credensial tidak sesuai

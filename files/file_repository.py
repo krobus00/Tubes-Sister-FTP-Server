@@ -4,7 +4,6 @@ class FileRepository:
         self.cursor = self.db.cursor()
 
     def get_files(self):
-        self.db.ping(reconnect=True)
         # membuat query untuk mendapatkan list file yang tersedia
         # join 2 table (user dan files)
         # kemudian diurutkan berdasarkan waktu file diupload
@@ -15,7 +14,6 @@ class FileRepository:
         return self.cursor.fetchall()
 
     def get_my_files(self, userId):
-        self.db.ping(reconnect=True)
         # membuat query untuk mendapatkan list file dengan userId tertentu
         # join 2 table (user dan files)
         # kemudian diurutkan berdasarkan waktu file diupload
@@ -27,7 +25,6 @@ class FileRepository:
         return self.cursor.fetchall()
 
     def get_file_by_id(self, id):
-        self.db.ping(reconnect=True)
         # membuat query untuk mendapatkan file dengan id tertentu
         sql = 'SELECT * FROM files WHERE id = "{}"'.format(id)
         # execute query
@@ -36,7 +33,6 @@ class FileRepository:
         return self.cursor.fetchone()
 
     def store(self, fileId, userId, fileName, saved_filename, size):
-        self.db.ping(reconnect=True)
         # membuat query insert ke table files
         sql = "INSERT INTO files (id, user_id,filename,saved_filename,size) VALUES (%s, %s, %s, %s, %s)"
         # mengisi value yang akan diinsert
@@ -45,11 +41,9 @@ class FileRepository:
         return self.cursor.execute(sql, vals)
 
     def commit(self):
-        self.db.ping(reconnect=True)
         # melakukan commit terhadap transaksi yang sudah dijalankan
         self.db.commit()
 
     def rollback(self):
-        self.db.ping(reconnect=True)
         # melakukan rollback terhadap transaksi yang sudah dijalankan
         self.db.rollback()

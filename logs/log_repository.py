@@ -8,7 +8,6 @@ class LogRepository:
         self.cursor = self.db.cursor()
 
     def store(self, action, user_id, file_id):
-        self.db.ping(reconnect=True)
         # membuat uuid untuk data log
         logId = str(uuid.uuid4())
         # membuat query insert ke table activity_log
@@ -19,11 +18,9 @@ class LogRepository:
         self.cursor.execute(sql, vals)
 
     def commit(self):
-        self.db.ping(reconnect=True)
         # melakukan commit terhadap transaksi yang sudah dijalankan
         self.db.commit()
 
     def rollback(self):
-        self.db.ping(reconnect=True)
         # melakukan rollback terhadap transaksi yang sudah dijalankan
         self.db.rollback()
