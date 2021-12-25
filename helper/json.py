@@ -18,6 +18,6 @@ def Response(success=True, message="", data=None, error=None):
     # menambahkan error traceback jika env bukan production
     # agar mempermudah debugging
     if not IsProductionEnv():
-        res["errorTraceback"] = str(error)
+        res["traceback"] = str(error)
     # return string json
     return json.dumps(res)

@@ -22,6 +22,23 @@ class LogRepository:
         # execute query
         self.cursor.execute(sql, vals)
 
+    def get_activity_log(self, db, filter):
+        self._database(db)
+        # membuat query untuk mengambil data log berdasarkan tanggal
+        sql = "SELECT DATE(created_at) AS tanggal, COUNT(*) AS total FROM activity_logs"
+        
+        if filter == "upload":
+            sql += " WHERE action = 'upload'"
+        elif filter == "download":
+            sql += " WHERE action = 'download'"
+        
+        sql += " GROUP BY DATE(created_at) ORDER BY tanggal DESC"
+
+        # execute query
+        self.cursor.execute(sql)
+        # mengambil seluruh hasil query yang dijalankan
+        return self.cursor.fetchall()
+
     def commit(self, db):
         self._database(db)
         # melakukan commit terhadap transaksi yang sudah dijalankan

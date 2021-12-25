@@ -75,12 +75,12 @@ class UserService:
                 error=e
             )
 
-    def get_most_active(self):
+    def get_most_active(self, filter=""):
         # membuat try catch untuk menghandle exception
         try:
             self.conn = self.db.connection()
             # memanggil fungsi get most active users dari user repository
-            users = self.userRepo.get_most_active_users(self.conn)
+            users = self.userRepo.get_most_active_users(self.conn, filter)
             listuser = []
             # melakukan looping terhadap data users
             for user in users:

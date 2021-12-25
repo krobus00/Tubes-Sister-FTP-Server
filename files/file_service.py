@@ -68,6 +68,8 @@ class FileService:
             with open("uploads/{}".format(file[4]), "rb") as handle:
                 # mencatat history dari user sekarang
                 self.logRepo.store(self.conn, "DOWNLOAD", userId, fileId)
+                # commit transaction ketika semua data sudah berhasil diinput
+                self.logRepo.commit(self.conn)
                 # return pesan sukses dengan filename dan filedatanya
                 self.db.close_connection()
                 fileData = handle.read().decode('utf8')
@@ -145,6 +147,35 @@ class FileService:
             return Response(
                 message="Berhasil mendapatkan list file",
                 data=listfiles
+            )
+        except Exception as e:
+            self.db.close_connection()
+            # jika terjadi exception
+            # return pesan error
+            return Response(
+                success=False,
+                message="Terjadi kesalahan, silahkan coba lagi nanti",
+                error=e
+            )
+    def get_log_activity(self, filter=""):
+        # membuat try catch untuk menghandle exception
+        try:
+            self.conn = self.db.connection()
+            # memanggil fungsi get activity log dari log repository
+            logs = self.logRepo.get_activity_log(self.conn, filter)
+            listlogs = []
+            # melakukan looping terhadap data log
+            for log in logs:
+                # menambahkan data ke list logs
+                listlogs.append({
+                    "tanggal": log[0].strftime('%Y-%m-%d'),
+                    "total": log[1],
+                })
+            self.db.close_connection()
+            # return pesan sukses
+            return Response(
+                message="Berhasil mendapatkan data log",
+                data=listlogs
             )
         except Exception as e:
             self.db.close_connection()
