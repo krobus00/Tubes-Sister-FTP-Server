@@ -88,6 +88,7 @@ class UserService:
                     "username": user[0],
                     "total": user[1],
                 })
+            self.db.close_connection()
             # return pesan sukses
             return Response(
                 message="Berhasil mendapatkan list user",
