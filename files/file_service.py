@@ -37,6 +37,7 @@ class FileService:
                 self.fileRepo.commit(self.conn)
                 self.logRepo.commit(self.conn)
                 self.db.close_connection()
+                handle.close()
                 # mengembalikan nilai True karena fungsi berjalan normal
                 return Response(message="Data berhasil diupload")
         except Exception as e:
@@ -69,11 +70,13 @@ class FileService:
                 self.logRepo.store(self.conn, "DOWNLOAD", userId, fileId)
                 # return pesan sukses dengan filename dan filedatanya
                 self.db.close_connection()
+                fileData = handle.read().decode('utf8')
+                handle.close()
                 return Response(
                     message="Berhasil melakukan download data",
                     data={
                         "fileName": file[3],
-                        "fileData": handle.read().decode('utf8'),
+                        "fileData": fileData,
                     }
                 )
         except Exception as e:
