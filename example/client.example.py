@@ -1,14 +1,31 @@
 import xmlrpc.client as client
 import json
+import base64
+
 server = client.ServerProxy(
     "http://127.0.0.1:1717/"
 )
 
-USERNAME = "username"
-PASSWORD = "password"
+USERNAME = "admin"
+PASSWORD = "admin"
 UPLOAD_FILENAME = "sample.txt"
-USER_UUID = "15154628-ee70-496c-8c85-80d965207bb9"
-FILE_UUID = "4f321183-bbeb-45e3-a139-173d54d474e3"
+USER_UUID = "9e317ea2-1b37-44be-8bb0-47e110c9d907"
+FILE_UUID = "00c0e99b-2a48-4188-9826-9a42d34048ff"
+
+# GET ALL LOG FILE
+
+res = server.logs()
+print(res)
+
+# GET ALL DOWNLOAD LOG FILE
+
+res = server.logs("download")
+print(res)
+
+# GET ALL UPLOAD LOG FILE
+
+res = server.logs("upload")
+print(res)
 
 # REGISTER
 
@@ -47,17 +64,28 @@ except Exception as e:
 try:
     res = server.file_download(USER_UUID, FILE_UUID)
     res = json.loads(res)
+    print(res)
     if(res["success"]):
         filename = res["data"]["fileName"]
         with open(filename, "wb") as handle:
-            handle.write(bytes(res["data"]['fileData'], 'utf-8'))
+            handle.write(base64.b64decode(res["data"]['fileData']))
             handle.close()
     else:
         print(res)
 except Exception as e:
     print(e)
 
-# GET MOST ACTIVE USERS
+# GET ALL MOST ACTIVE USERS
 
 res = server.most_active()
+print(res)
+
+# GET ALL MOST ACTIVE DOWNLOAD USERS
+
+res = server.most_active("download")
+print(res)
+
+# GET ALL MOST ACTIVE UPLOAD USERS
+
+res = server.most_active("upload")
 print(res)

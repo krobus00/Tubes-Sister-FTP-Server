@@ -25,13 +25,20 @@ class UserRepository:
         # execute query
         return self.cursor.execute(sql, vals)
 
-    def get_most_active_users(self, db):
+    def get_most_active_users(self, db, filter):
         self._database(db)
         # membuat query untuk mengurutkan user berdasarkan total activity
         # join 2 table (user dan activity_logs)
         # kemudian group by username
         # kemudian diurutkan berdasarkan total activity_logs
-        sql = "SELECT u.username, COUNT(*) as total FROM users u JOIN activity_logs al ON al.user_id = u.id GROUP BY u.username ORDER BY total DESC"
+        sql = "SELECT u.username, COUNT(*) as total FROM users u JOIN activity_logs al ON al.user_id = u.id"
+        
+        if filter == "upload":
+            sql += " AND al.action = 'upload'"
+        elif filter == "download":
+            sql += " AND al.action = 'download'"
+
+        sql += " GROUP BY u.username ORDER BY total DESC"
         # execute query
         self.cursor.execute(sql)
         # mengambil seluruh hasil query yang dijalankan

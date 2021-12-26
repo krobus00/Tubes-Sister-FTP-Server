@@ -16,7 +16,9 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
+CREATE DATABASE IF NOT EXISTS sister;
 
+USE sister;
 --
 -- Database: `sister`
 --
@@ -27,7 +29,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `activity_logs`
 --
 
-CREATE TABLE `activity_logs` (
+CREATE TABLE IF NOT EXISTS `activity_logs` (
   `id` varchar(36) NOT NULL,
   `action` varchar(255) NOT NULL,
   `user_id` varchar(36) NOT NULL,
@@ -41,7 +43,7 @@ CREATE TABLE `activity_logs` (
 -- Table structure for table `files`
 --
 
-CREATE TABLE `files` (
+CREATE TABLE IF NOT EXISTS `files` (
   `_id` int(11) NOT NULL,
   `id` varchar(36) NOT NULL,
   `user_id` varchar(36) NOT NULL,
@@ -59,7 +61,7 @@ CREATE TABLE `files` (
 -- Table structure for table `users`
 --
 
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `_id` int(11) NOT NULL,
   `id` varchar(36) NOT NULL,
   `username` varchar(255) NOT NULL,
