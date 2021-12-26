@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  rpc_db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: sister
+      MYSQL_USER: sister
+      MYSQL_PASSWORD: password
+    volumes:
+        - .docker/migration.sql:/docker-entrypoint-initdb.d/migration.sql
+        - db_data:/var/lib/mysql
+    networks:
+      - rpc_network
+
+  server_rpc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "1818:1818"
+    depends_on:
+      - rpc_db
+    volumes:
+      - rpc_data:/code/uploads
+    networks:
+      - rpc_network
+
+networks:
+  rpc_network:
+    driver: bridge
+volumes:
+    db_data:
+    rpc_data:
