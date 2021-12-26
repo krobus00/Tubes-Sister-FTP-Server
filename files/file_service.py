@@ -158,6 +158,7 @@ class FileService:
                 message="Terjadi kesalahan, silahkan coba lagi nanti",
                 error=e
             )
+
     def get_log_activity(self, filter=""):
         # membuat try catch untuk menghandle exception
         try:

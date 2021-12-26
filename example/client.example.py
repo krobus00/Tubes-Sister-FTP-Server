@@ -89,3 +89,18 @@ print(res)
 
 res = server.most_active("upload")
 print(res)
+
+# GET ALL ACTIVITY LOGS
+
+res = server.logs()
+print(res)
+
+# GET ALL DOWNLOAD ACTIVITY LOGS
+
+res = server.logs("download")
+print(res)
+
+# GET ALL UPLOAD ACTIVITY LOGS
+
+res = server.logs("upload")
+print(res)
