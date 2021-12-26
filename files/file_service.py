@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime
+import base64
 
 from helper.json import *
 
@@ -72,7 +73,7 @@ class FileService:
                 self.logRepo.commit(self.conn)
                 # return pesan sukses dengan filename dan filedatanya
                 self.db.close_connection()
-                fileData = handle.read().decode('utf8')
+                fileData = base64.b64encode(handle.read()).decode('utf8')
                 handle.close()
                 return Response(
                     message="Berhasil melakukan download data",
@@ -83,7 +84,7 @@ class FileService:
                 )
         except Exception as e:
             # ketika ada fungsi yang gagal maka rollback transaction yang sudah berjalan
-            self.logRepo.rollback()
+            self.logRepo.rollback(self.conn)
             self.db.close_connection()
             # jika terjadi exception
             # return pesan error
