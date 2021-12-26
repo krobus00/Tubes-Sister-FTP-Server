@@ -3,7 +3,7 @@ import json
 import base64
 
 server = client.ServerProxy(
-    "http://127.0.0.1:1717/"
+    "http://127.0.0.1:1818/"
 )
 
 USERNAME = "admin"
@@ -11,6 +11,11 @@ PASSWORD = "admin"
 UPLOAD_FILENAME = "sample.txt"
 USER_UUID = "9e317ea2-1b37-44be-8bb0-47e110c9d907"
 FILE_UUID = "00c0e99b-2a48-4188-9826-9a42d34048ff"
+
+# GET ALL LOG FILE
+
+res = server.log_data()
+print(res)
 
 # GET ALL LOG FILE
 

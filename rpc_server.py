@@ -42,6 +42,11 @@ class RPCServer:
             "logs"
         )
 
+        self.server.register_function(
+            self.fileService.get_log_data,
+            "log_data"
+        )
+
         # users
         self.server.register_function(
             self.userService.register,

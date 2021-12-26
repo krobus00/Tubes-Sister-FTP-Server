@@ -188,3 +188,37 @@ class FileService:
                 message="Terjadi kesalahan, silahkan coba lagi nanti",
                 error=e
             )
+
+    def get_log_data(self):
+        # membuat try catch untuk menghandle exception
+        try:
+            self.conn = self.db.connection()
+            # memanggil fungsi get log data dari log repository
+            logs = self.logRepo.get_logs_data(self.conn)
+            listlogs = []
+            # melakukan looping terhadap data log
+            for log in logs:
+                # menambahkan data ke list logs
+                listlogs.append({
+                    "action": log[0],
+                    "userId": log[1],
+                    "username": log[2],
+                    "fileId": log[3],
+                    "filename": log[4],
+                    "tanggal": log[5].strftime('%Y-%m-%d'),
+                })
+            self.db.close_connection()
+            # return pesan sukses
+            return Response(
+                message="Berhasil mendapatkan data log",
+                data=listlogs
+            )
+        except Exception as e:
+            self.db.close_connection()
+            # jika terjadi exception
+            # return pesan error
+            return Response(
+                success=False,
+                message="Terjadi kesalahan, silahkan coba lagi nanti",
+                error=e
+            )
