@@ -26,14 +26,22 @@ class LogRepository:
         self._database(db)
         # membuat query untuk mengambil data log berdasarkan tanggal
         sql = "SELECT DATE(created_at) AS tanggal, COUNT(*) AS total FROM activity_logs"
-        
+
         if filter == "upload":
             sql += " WHERE action = 'upload'"
         elif filter == "download":
             sql += " WHERE action = 'download'"
-        
+
         sql += " GROUP BY DATE(created_at) ORDER BY tanggal DESC"
 
+        # execute query
+        self.cursor.execute(sql)
+        # mengambil seluruh hasil query yang dijalankan
+        return self.cursor.fetchall()
+
+    def get_logs_data(self, db):
+        self._database(db)
+        sql = "SELECT al.action, al.user_id, u.username, al.file_id, f.filename, al.created_at FROM activity_logs al JOIN files f ON al.file_id  = f.id JOIN users u ON u.id = al.user_id ORDER BY al.created_at DESC"
         # execute query
         self.cursor.execute(sql)
         # mengambil seluruh hasil query yang dijalankan

@@ -8,8 +8,9 @@ services:
       MYSQL_DATABASE: sister
       MYSQL_USER: sister
       MYSQL_PASSWORD: password
+    command: --init-file /data/application/init.sql
     volumes:
-        - .docker/migration.sql:/docker-entrypoint-initdb.d/migration.sql
+        - ./migration.sql:/data/application/init.sql
         - db_data:/var/lib/mysql
     networks:
       - rpc_network
