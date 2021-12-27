@@ -205,7 +205,7 @@ class FileService:
                     "username": log[2],
                     "fileId": log[3],
                     "filename": log[4],
-                    "tanggal": log[5].strftime('%Y-%m-%d'),
+                    "datetime": str(log[5])[:19],
                 })
             self.db.close_connection()
             # return pesan sukses
