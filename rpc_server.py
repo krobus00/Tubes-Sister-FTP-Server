@@ -61,4 +61,10 @@ class RPCServer:
             self.userService.get_most_active,
             "most_active"
         )
+
+        self.server.register_function(
+            self.userService.get_users,
+            "get_users"
+        )
+
         self.server.serve_forever()

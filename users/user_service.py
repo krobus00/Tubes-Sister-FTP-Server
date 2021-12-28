@@ -40,7 +40,6 @@ class UserService:
                 message="Terjadi kesalahan, silahkan coba lagi nanti",
                 error=e
             )
-            
 
     def register(self, username, password):
         # membuat try catch untuk menghandle exception
@@ -88,6 +87,37 @@ class UserService:
                 listuser.append({
                     "username": user[0],
                     "total": user[1],
+                })
+            self.db.close_connection()
+            # return pesan sukses
+            return Response(
+                message="Berhasil mendapatkan list user",
+                data=listuser
+            )
+        except Exception as e:
+            self.db.close_connection()
+            # jika terjadi exception
+            # return pesan error
+            return Response(
+                success=False,
+                message="Terjadi kesalahan, silahkan coba lagi nanti",
+                error=e
+            )
+
+    def get_users(self):
+        # membuat try catch untuk menghandle exception
+        try:
+            self.conn = self.db.connection()
+            # memanggil fungsi get users dari user repository
+            users = self.userRepo.get_users(self.conn)
+            listuser = []
+            # melakukan looping terhadap data users
+            for user in users:
+                # menambahkan data ke list users
+                listuser.append({
+                    "username": user[0],
+                    "role": user[1],
+                    "created_at": user[2].strftime('%Y-%m-%d %H:%M:%S'),
                 })
             self.db.close_connection()
             # return pesan sukses

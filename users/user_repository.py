@@ -32,13 +32,22 @@ class UserRepository:
         # kemudian group by username
         # kemudian diurutkan berdasarkan total activity_logs
         sql = "SELECT u.username, COUNT(*) as total FROM users u JOIN activity_logs al ON al.user_id = u.id"
-        
+
         if filter == "upload":
             sql += " AND al.action = 'upload'"
         elif filter == "download":
             sql += " AND al.action = 'download'"
 
         sql += " GROUP BY u.username ORDER BY total DESC"
+        # execute query
+        self.cursor.execute(sql)
+        # mengambil seluruh hasil query yang dijalankan
+        return self.cursor.fetchall()
+
+    def get_users(self, db):
+        self._database(db)
+        # membuat query untuk mendapatkan data users
+        sql = "SELECT username, role, created_at FROM users"
         # execute query
         self.cursor.execute(sql)
         # mengambil seluruh hasil query yang dijalankan
